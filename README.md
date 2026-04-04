@@ -1,18 +1,23 @@
-# MiniStack — Free, Open-Source Local AWS Emulator
+<p align="center">
+  <img src="ministack_logo.png" alt="MiniStack — Free Open-Source AWS Emulator" width="400"/>
+</p>
 
-> **LocalStack is no longer free.** MiniStack is a fully open-source, zero-cost drop-in replacement.
-> Single port · No account · No license key · No telemetry · Just AWS APIs, locally.
-
-![GitHub release](https://img.shields.io/github/v/release/Nahuel990/ministack)
-![Build](https://img.shields.io/github/actions/workflow/status/Nahuel990/ministack/ci.yml?branch=master)
-![Docker Pulls](https://img.shields.io/docker/pulls/nahuelnucera/ministack)
-![Docker Image Size](https://img.shields.io/docker/image-size/nahuelnucera/ministack/latest)
-![License](https://img.shields.io/github/license/Nahuel990/ministack)
-![Python](https://img.shields.io/badge/python-3.12-blue)
-![GitHub stars](https://img.shields.io/github/stars/Nahuel990/ministack)
+<h1 align="center">MiniStack</h1>
+<p align="center"><strong>Free, open-source local AWS emulator. Free forever.</strong></p>
+<p align="center">35+ AWS services on a single port · Terraform compatible · Real databases · MIT licensed</p>
 
 <p align="center">
-  <img src="ministack1.png" alt="MiniStack in action" width="700"/>
+  <a href="https://github.com/Nahuel990/ministack/releases"><img src="https://img.shields.io/github/v/release/Nahuel990/ministack" alt="GitHub release"></a>
+  <a href="https://github.com/Nahuel990/ministack/actions"><img src="https://img.shields.io/github/actions/workflow/status/Nahuel990/ministack/ci.yml?branch=master" alt="Build"></a>
+  <a href="https://hub.docker.com/r/nahuelnucera/ministack"><img src="https://img.shields.io/docker/pulls/nahuelnucera/ministack" alt="Docker Pulls"></a>
+  <a href="https://hub.docker.com/r/nahuelnucera/ministack"><img src="https://img.shields.io/docker/image-size/nahuelnucera/ministack/latest" alt="Docker Image Size"></a>
+  <a href="https://github.com/Nahuel990/ministack/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Nahuel990/ministack" alt="License"></a>
+  <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python">
+  <a href="https://github.com/Nahuel990/ministack/stargazers"><img src="https://img.shields.io/github/stars/Nahuel990/ministack" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <a href="https://ministack.org">Website</a> · <a href="https://hub.docker.com/r/nahuelnucera/ministack">Docker Hub</a> · <a href="https://www.linkedin.com/company/ministackorg/">LinkedIn</a> · <a href="https://www.producthunt.com/products/ministack">Product Hunt</a>
 </p>
 
 ---
@@ -280,7 +285,7 @@ subnet = ec2.create_subnet(
 | **API Gateway v1** | CreateRestApi, GetRestApi, GetRestApis, UpdateRestApi, DeleteRestApi, CreateResource, GetResource, GetResources, UpdateResource, DeleteResource, PutMethod, GetMethod, DeleteMethod, UpdateMethod, PutMethodResponse, GetMethodResponse, DeleteMethodResponse, PutIntegration, GetIntegration, DeleteIntegration, UpdateIntegration, PutIntegrationResponse, GetIntegrationResponse, DeleteIntegrationResponse, CreateDeployment, GetDeployment, GetDeployments, UpdateDeployment, DeleteDeployment, CreateStage, GetStage, GetStages, UpdateStage, DeleteStage, CreateAuthorizer, GetAuthorizer, GetAuthorizers, UpdateAuthorizer, DeleteAuthorizer, CreateModel, GetModel, GetModels, DeleteModel, CreateApiKey, GetApiKey, GetApiKeys, UpdateApiKey, DeleteApiKey, CreateUsagePlan, GetUsagePlan, GetUsagePlans, UpdateUsagePlan, DeleteUsagePlan, CreateUsagePlanKey, GetUsagePlanKeys, DeleteUsagePlanKey, CreateDomainName, GetDomainName, GetDomainNames, DeleteDomainName, CreateBasePathMapping, GetBasePathMapping, GetBasePathMappings, DeleteBasePathMapping, TagResource, UntagResource, GetTags | REST API (v1) protocol; Lambda proxy format 1.0 (AWS_PROXY), HTTP proxy (HTTP_PROXY), MOCK integration; data plane via `{apiId}.execute-api.localhost`; resource tree with `{param}` and `{proxy+}` path matching; JSON Patch for all PATCH operations; state persistence |
 | **ELBv2 / ALB** | CreateLoadBalancer, DescribeLoadBalancers, DeleteLoadBalancer, DescribeLoadBalancerAttributes, ModifyLoadBalancerAttributes, CreateTargetGroup, DescribeTargetGroups, ModifyTargetGroup, DeleteTargetGroup, DescribeTargetGroupAttributes, ModifyTargetGroupAttributes, CreateListener, DescribeListeners, ModifyListener, DeleteListener, CreateRule, DescribeRules, ModifyRule, DeleteRule, SetRulePriorities, RegisterTargets, DeregisterTargets, DescribeTargetHealth, AddTags, RemoveTags, DescribeTags | Control plane + data plane; ALB→Lambda live traffic routing; `path-pattern`, `host-header`, `http-method`, `query-string`, `http-header` rule conditions; `forward`, `redirect`, `fixed-response` actions; data plane via `{lb-name}.alb.localhost` Host header or `/_alb/{lb-name}/` path prefix |
 
-| **KMS** | CreateKey, ListKeys, DescribeKey, GetPublicKey, Sign, Verify, Encrypt, Decrypt, GenerateDataKey, GenerateDataKeyWithoutPlaintext, CreateAlias, DeleteAlias, ListAliases, UpdateAlias | RSA (2048/4096) and symmetric keys; PKCS1v15 and PSS signing; envelope encryption; alias resolution (`alias/my-key`); requires `cryptography` package (optional) |
+| **KMS** | CreateKey, ListKeys, DescribeKey, GetPublicKey, Sign, Verify, Encrypt, Decrypt, GenerateDataKey, GenerateDataKeyWithoutPlaintext, CreateAlias, DeleteAlias, ListAliases, UpdateAlias, EnableKeyRotation, DisableKeyRotation, GetKeyRotationStatus, GetKeyPolicy, PutKeyPolicy, ListKeyPolicies, EnableKey, DisableKey, ScheduleKeyDeletion, CancelKeyDeletion, TagResource, UntagResource, ListResourceTags | 27 actions; RSA (2048/4096) and symmetric keys; PKCS1v15 and PSS signing; envelope encryption; alias resolution; key rotation; key policies; tags; enable/disable/schedule deletion; full Terraform `aws_kms_key` compatible; `cryptography` package included in Docker image |
 
 ### CloudFormation
 
@@ -773,10 +778,10 @@ See [`Testcontainers/java-testcontainers`](Testcontainers/java-testcontainers), 
 | **ECR** | ✅ | ✅ | ✅ |
 | **CloudFront** | ✅ | Paid | ✅ |
 | **AppSync** | ✅ | NO | ✅ |
-| Cost | **Free** | Was free, now paid | $35+/mo |
-| Docker image size | ~200MB | ~1GB | ~1GB |
-| Memory at idle | ~30MB | ~500MB | ~500MB |
-| Startup time | ~2s | ~15-30s | ~15-30s |
+| Cost | **Free forever** | Was free, now paid | $35+/mo |
+| Docker image size | ~250MB | ~1GB | ~1GB |
+| Memory at idle | ~40MB | ~500MB | ~500MB |
+| Startup time | <1s | ~15-30s | ~15-30s |
 | License | MIT | BSL (restricted) | Proprietary |
 
 ---
