@@ -659,3 +659,22 @@ def test_rds_parse_member_list_both_formats():
 
     # Empty case
     assert _parse_member_list({}, "SubnetIds") == []
+
+
+def test_rds_describe_by_dbi_resource_id(rds):
+    """DescribeDBInstances should accept DbiResourceId as the identifier (AWS parity)."""
+    resp = rds.create_db_instance(
+        DBInstanceIdentifier="resid-lookup-test",
+        DBInstanceClass="db.t3.micro",
+        Engine="postgres",
+        MasterUsername="admin",
+        MasterUserPassword="password123",
+        AllocatedStorage=20,
+    )
+    resource_id = resp["DBInstance"]["DbiResourceId"]
+    assert resource_id.startswith("db-")
+
+    desc = rds.describe_db_instances(DBInstanceIdentifier=resource_id)
+    assert len(desc["DBInstances"]) == 1
+    assert desc["DBInstances"][0]["DBInstanceIdentifier"] == "resid-lookup-test"
+    assert desc["DBInstances"][0]["DbiResourceId"] == resource_id

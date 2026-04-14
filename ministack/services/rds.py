@@ -147,6 +147,26 @@ async def handle_request(method, path, headers, body, query_params):
 
 
 # ---------------------------------------------------------------------------
+# Instance resolution helpers
+# ---------------------------------------------------------------------------
+
+def _resolve_instance(db_id):
+    """Look up an instance by DBInstanceIdentifier or DbiResourceId.
+
+    AWS accepts either value for the DBInstanceIdentifier parameter in
+    DescribeDBInstances and related APIs.
+    """
+    inst = _instances.get(db_id)
+    if inst:
+        return inst
+    if db_id.startswith("db-"):
+        for inst in _instances.values():
+            if inst.get("DbiResourceId") == db_id:
+                return inst
+    return None
+
+
+# ---------------------------------------------------------------------------
 # DB Instances
 # ---------------------------------------------------------------------------
 
@@ -318,7 +338,7 @@ def _create_db_instance(p):
 
 def _delete_db_instance(p):
     db_id = _p(p, "DBInstanceIdentifier")
-    instance = _instances.get(db_id)
+    instance = _resolve_instance(db_id)
     if not instance:
         return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
 
@@ -351,7 +371,7 @@ def _delete_db_instance(p):
 def _describe_db_instances(p):
     db_id = _p(p, "DBInstanceIdentifier")
     if db_id:
-        instance = _instances.get(db_id)
+        instance = _resolve_instance(db_id)
         if not instance:
             return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
         instances = [instance]
@@ -368,7 +388,7 @@ def _describe_db_instances(p):
 
 def _modify_db_instance(p):
     db_id = _p(p, "DBInstanceIdentifier")
-    instance = _instances.get(db_id)
+    instance = _resolve_instance(db_id)
     if not instance:
         return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
 
@@ -434,7 +454,7 @@ def _modify_db_instance(p):
 
 def _start_db_instance(p):
     db_id = _p(p, "DBInstanceIdentifier")
-    instance = _instances.get(db_id)
+    instance = _resolve_instance(db_id)
     if not instance:
         return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
     instance["DBInstanceStatus"] = "available"
@@ -443,7 +463,7 @@ def _start_db_instance(p):
 
 def _stop_db_instance(p):
     db_id = _p(p, "DBInstanceIdentifier")
-    instance = _instances.get(db_id)
+    instance = _resolve_instance(db_id)
     if not instance:
         return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
     instance["DBInstanceStatus"] = "stopped"
@@ -452,7 +472,7 @@ def _stop_db_instance(p):
 
 def _reboot_db_instance(p):
     db_id = _p(p, "DBInstanceIdentifier")
-    instance = _instances.get(db_id)
+    instance = _resolve_instance(db_id)
     if not instance:
         return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
     instance["DBInstanceStatus"] = "available"
@@ -467,7 +487,7 @@ def _create_read_replica(p):
     source_id = _p(p, "SourceDBInstanceIdentifier")
     replica_id = _p(p, "DBInstanceIdentifier")
 
-    source = _instances.get(source_id)
+    source = _resolve_instance(source_id)
     if not source:
         return _error("DBInstanceNotFoundFault", f"DBInstance {source_id} not found.", 404)
     if replica_id in _instances:
@@ -782,7 +802,7 @@ def _create_db_snapshot(p):
     if snap_id in _snapshots:
         return _error("DBSnapshotAlreadyExists", f"Snapshot {snap_id} already exists.", 400)
 
-    instance = _instances.get(db_id)
+    instance = _resolve_instance(db_id)
     if not instance:
         return _error("DBInstanceNotFoundFault", f"DBInstance {db_id} not found.", 404)
 
